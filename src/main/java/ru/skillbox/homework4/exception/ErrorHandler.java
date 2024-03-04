@@ -5,8 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.skillbox.homework4.exception.exceptions.AlreadyExistsException;
 import ru.skillbox.homework4.exception.exceptions.BadRequestException;
 import ru.skillbox.homework4.exception.exceptions.ObjectNotFoundException;
+import ru.skillbox.homework4.exception.exceptions.RefreshTokenException;
 import ru.skillbox.homework4.exception.exceptions.UnsupportedStateException;
 
 @RestControllerAdvice
@@ -27,6 +29,13 @@ public class ErrorHandler {
         return new ErrorResponse("Object not available 400 ", e.getMessage());
     }
 
+    @ExceptionHandler(RefreshTokenException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlerBadRequest(final RefreshTokenException e) {
+        log.warn("400 {}", e.getMessage(), e);
+        return new ErrorResponse("Object not available 400 ", e.getMessage());
+    }
+
     @ExceptionHandler(UnsupportedStateException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handlerUnsupportedState(final UnsupportedStateException exception) {
@@ -34,18 +43,11 @@ public class ErrorHandler {
         return new ErrorResponse(exception.getMessage(), exception.getMessage());
     }
 
-//    @ExceptionHandler
-//    @ResponseStatus(HttpStatus.CONFLICT)
-//    public ErrorResponse handleIntegrityException(final ConflictException e) {
-//        log.warn("409 {}", e.getMessage(), e);
-//        return new ErrorResponse("No valid data", e.getMessage());
-//    }
-
-//    @ExceptionHandler
-//    @ResponseStatus(HttpStatus.CONFLICT)
-//    public ErrorResponse handleIntegrityException(final DataAccessException e) {
-//        log.warn("409 {}", e.getMessage(), e);
-//        return new ErrorResponse("No valid data", e.getMessage());
-//    }
+    @ExceptionHandler(AlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
+    public ErrorResponse alreadyExistsException(final AlreadyExistsException exception) {
+        log.warn("502 {}", exception.getMessage(), exception);
+        return new ErrorResponse(exception.getMessage(), exception.getMessage());
+    }
 }
 

@@ -41,19 +41,6 @@ public class UserServiceImpl implements UserService {
         }));
     }
 
-
-    @Override
-    @Transactional
-    public UserDto create(UserDto userDto) {
-
-        User user = UserMapper.USER_MAPPER.toUser(userDto);
-
-        userRepository.save(user);
-        log.info("User was created");
-
-        return UserMapper.USER_MAPPER.toUserDto(user);
-    }
-
     @Override
     @Transactional
     public UserDto update(Long id, UserDto userDto) {
@@ -64,8 +51,8 @@ public class UserServiceImpl implements UserService {
             userBd.setEmail(userDto.getEmail());
         }
 
-        if (userDto.getName() != null) {
-            userBd.setName(userDto.getName());
+        if (userDto.getUsername() != null) {
+            userBd.setUsername(userDto.getUsername());
         }
 
         log.info("User updated");

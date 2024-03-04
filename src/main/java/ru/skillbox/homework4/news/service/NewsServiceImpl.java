@@ -3,6 +3,7 @@ package ru.skillbox.homework4.news.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.skillbox.homework4.commentary.model.Commentary;
@@ -74,9 +75,9 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    public NewsDto createNews(Long userId, Long categoryId, NewsDto newsDto) {
+    public NewsDto createNews(UserDetails userDetails, Long categoryId, NewsDto newsDto) {
 
-        User user = checkUserById(userId);
+        User user = checkByUserName(userDetails.getUsername());
         Category category = checkCategoryById(categoryId);
 
         News news = new News();
@@ -88,12 +89,12 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    public NewsDto updateNewsById(Long userId,
+    public NewsDto updateNewsById(UserDetails userDetails,
                                   Long categoryId,
                                   Long newsId,
                                   NewsDto newsDto) {
 
-        checkUserById(userId);
+        User user = checkByUserName(userDetails.getUsername());
         News newsBd = checkNewsById(newsId);
         Category category = checkCategoryById(categoryId);
 
@@ -122,7 +123,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    public NewsDto deleteNewsById(Long newsId, Long userId) {
+    public NewsDto deleteNewsById(Long newsId, UserDetails userDetails) {
 
         News news = checkNewsById(newsId);
 
@@ -157,6 +158,14 @@ public class NewsServiceImpl implements NewsService {
 
             log.warn("Category with id {} was not found", categoryId);
             throw new ObjectNotFoundException("Category was not found");
+        });
+    }
+
+    private User checkByUserName(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> {
+
+            log.warn("User with name {} was not found", username);
+            throw new ObjectNotFoundException("User was not found");
         });
     }
 }

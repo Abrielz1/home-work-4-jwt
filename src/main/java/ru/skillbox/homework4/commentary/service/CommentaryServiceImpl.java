@@ -3,6 +3,7 @@ package ru.skillbox.homework4.commentary.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.skillbox.homework4.commentary.dto.CommentariesDto;
@@ -39,9 +40,9 @@ public class CommentaryServiceImpl implements CommentaryService {
     }
 
     @Override
-    public CommentariesDto findCommentaryById(Long newsId, Long userId, Long commentaryId) {
+    public CommentariesDto findCommentaryById(Long newsId, UserDetails userDetails, Long commentaryId) {
 
-        User user = checkUserById(userId);
+        User user = checkByUserName(userDetails.getUsername());
         News news = checkNewsById(newsId);
         Commentary commentary = checkCommentaryById(commentaryId);
         CommentariesDto commentariesDto = COMMENTARY_MAPPER.setNewsAndAuthorsOfComments(commentary);
@@ -54,11 +55,11 @@ public class CommentaryServiceImpl implements CommentaryService {
     @Override
     @Transactional
     public CommentariesDto createCommentary(Long newsId,
-                                            Long userId,
+                                            UserDetails userDetails,
                                             CommentariesDto commentariesDto) {
 
         News news = checkNewsById(newsId);
-        User user = checkUserById(userId);
+        User user = checkByUserName(userDetails.getUsername());
         Commentary commentary = new Commentary();
         commentary.setNews(news);
         commentary.setUser(user);
@@ -77,11 +78,11 @@ public class CommentaryServiceImpl implements CommentaryService {
     @Transactional
     public CommentariesDto updateCommentaryById(Long newsId,
                                                 Long commentaryId,
-                                                Long userId,
+                                                UserDetails userDetails,
                                                 CommentariesDto commentariesDto) {
 
         News newsDb = checkNewsById(newsId);
-        User userDb = checkUserById(userId);
+        User user = checkByUserName(userDetails.getUsername());
         Commentary commentaryDb = checkCommentaryById(commentaryId);
 
         if (commentariesDto != null) {
@@ -97,7 +98,7 @@ public class CommentaryServiceImpl implements CommentaryService {
         }
 
         CommentariesDto commentariesDtoResponse = COMMENTARY_MAPPER.setNewsAndAuthorsOfComments(commentaryDb);
-        commentariesDtoResponse = COMMENTARY_MAPPER.setAuthorIdAndNewsId(commentariesDtoResponse, userDb, newsDb);
+        commentariesDtoResponse = COMMENTARY_MAPPER.setAuthorIdAndNewsId(commentariesDtoResponse, user, newsDb);
 
         log.info("Commentary with id {} was created", commentaryDb.getId());
         return commentariesDtoResponse;
@@ -107,7 +108,7 @@ public class CommentaryServiceImpl implements CommentaryService {
     @Transactional
     public CommentariesDto deleteCommentaryById(Long newsId,
                                                 Long commentaryId,
-                                                Long userId) {
+                                                UserDetails userDetails) {
 
         Commentary commentary = checkCommentaryById(commentaryId);
 
@@ -139,6 +140,14 @@ public class CommentaryServiceImpl implements CommentaryService {
         return newsRepository.findById(newsId).orElseThrow(() -> {
             log.warn("News with id {} is not found", newsId);
             throw new ObjectNotFoundException("News was not found");
+        });
+    }
+
+    private User checkByUserName(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> {
+
+            log.warn("User with name {} was not found", username);
+            throw new ObjectNotFoundException("User was not found");
         });
     }
 }
