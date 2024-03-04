@@ -1,6 +1,6 @@
 package ru.skillbox.homework4.security.configuration;
 
-import com.example.spingjwtauthexample.model.RefreshToken;
+import ru.skillbox.homework4.user.model.RefreshToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +10,6 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisKeyValueAdapter;
 import org.springframework.data.redis.core.convert.KeyspaceConfiguration;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
-
 import java.time.Duration;
 import java.util.Collections;
 
@@ -19,7 +18,7 @@ import java.util.Collections;
 enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
 public class RedisConfiguration {
 
-    @Value("app.jwt.refreshTokenExpiration")
+    @Value("${app.jwt.refreshTokenExpiration}")
     private Duration refreshTokenExpiration;
 
     @Bean
