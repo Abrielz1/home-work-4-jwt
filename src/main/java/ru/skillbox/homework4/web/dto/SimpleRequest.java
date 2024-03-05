@@ -3,15 +3,13 @@ package ru.skillbox.homework4.web.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class LoginRequest {
+@RequiredArgsConstructor
+public class SimpleRequest {
 
-    private String username;
-
-    private String password;
+    private String message;
 }

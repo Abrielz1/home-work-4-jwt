@@ -97,7 +97,6 @@ public class SecurityService {
 
     @Transactional
     public void logout() {
-
         var currentPrincipal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (currentPrincipal instanceof AppUserDetails userDetails) {
           refreshTokenService.deleteByUserId(userDetails.getId());

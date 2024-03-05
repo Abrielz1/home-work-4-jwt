@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import ru.skillbox.homework4.exception.exceptions.RefreshTokenException;
 import ru.skillbox.homework4.user.model.RefreshToken;
 import ru.skillbox.homework4.user.repository.RefreshTokenRepository;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;

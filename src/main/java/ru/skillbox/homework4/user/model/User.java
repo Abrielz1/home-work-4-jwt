@@ -44,7 +44,7 @@ public class User {
 
     @Id
     @Positive
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank
