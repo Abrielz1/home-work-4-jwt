@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.skillbox.homework4.security.UserDetailsServiceImpl;
-
 import java.io.IOException;
 
 @Slf4j
