@@ -50,7 +50,7 @@ public class UserController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
-    public UserDto updateUserById(@Positive @PathVariable long id, @Validated(Update.class) @RequestBody UserDto userDto) {
+    public UserDto updateUserById(@Positive @PathVariable Long id, @Validated(Update.class) @RequestBody UserDto userDto) {
 
         return userService.update(id, userDto);
     }

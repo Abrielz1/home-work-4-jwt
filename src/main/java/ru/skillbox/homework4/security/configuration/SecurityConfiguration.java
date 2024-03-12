@@ -52,13 +52,13 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity security) throws Exception {
         security.authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/users/**")
                         .hasAnyRole("USER", "ADMIN", "MODERATOR")
                         .requestMatchers("/news/**")
                         .hasAnyRole("USER", "ADMIN", "MODERATOR")
                         .requestMatchers("/news/category/**")
                         .hasAnyRole("ADMIN", "MODERATOR")
-                .requestMatchers("/auth/**").permitAll()
                 .anyRequest().authenticated())
                 .exceptionHandling(configurer -> configurer.authenticationEntryPoint(entryPoint))
                 .csrf(AbstractHttpConfigurer::disable)

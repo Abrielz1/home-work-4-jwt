@@ -69,5 +69,4 @@ public class AuthController {
                 + " at time "
                 + LocalDateTime.now();
     }
-
 }
