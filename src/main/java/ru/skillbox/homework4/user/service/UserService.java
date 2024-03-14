@@ -10,8 +10,6 @@ public interface UserService {
 
     UserDto getById(Long id);
 
-    UserDto create(UserDto userDto);
-
     UserDto update(Long id, UserDto userDto);
 
     UserDto delete(Long id);

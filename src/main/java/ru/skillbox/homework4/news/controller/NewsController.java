@@ -5,6 +5,8 @@ import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,6 +37,7 @@ public class NewsController {
 
     @GetMapping("/find-by-criteria/")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public List<NewsDto> findAllCriteria(
             @ModelAttribute CategoryFilter filter,
             @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
@@ -46,6 +49,7 @@ public class NewsController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     public List<NewsDto> findAll(@PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
                                  @Positive @RequestParam(defaultValue = "10") Integer size) {
@@ -56,6 +60,7 @@ public class NewsController {
     }
 
     @GetMapping("/{newsId}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     public FullNewsDto findNewsById(@Positive @PathVariable Long newsId) {
 
@@ -63,30 +68,33 @@ public class NewsController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
-    public NewsDto createNews(@Positive @RequestParam(name = "userId") Long userId,
+    public NewsDto createNews(UserDetails userDetails,
                               @Positive @RequestParam(name = "categoryId") Long categoryId,
                               @Validated(Create.class) @RequestBody NewsDto newsDto) {
 
-        return newsService.createNews(userId, categoryId, newsDto);
+        return newsService.createNews(userDetails, categoryId, newsDto);
     }
 
     @PutMapping("/{newsId}")
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
-    public NewsDto updateNewsById(@Positive @RequestParam(name = "userId") Long userId,
+    public NewsDto updateNewsById(UserDetails userDetails,
                                   @Positive @RequestParam(name = "categoryId") Long categoryId,
                                   @Positive @PathVariable(name = "newsId") Long newsId,
                                   @Validated(Update.class) @RequestBody NewsDto newsDto) {
 
-        return newsService.updateNewsById(userId, categoryId, newsId, newsDto);
+        return newsService.updateNewsById(userDetails, categoryId, newsId, newsDto);
     }
 
 
     @DeleteMapping("/{newsId}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public NewsDto deleteNewsById(@Positive @PathVariable(name = "newsId") Long newsId,
-                                  @Positive @RequestParam(name = "userId") Long userId) {
+                                  UserDetails userDetails) {
 
-        return newsService.deleteNewsById(newsId, userId);
+        return newsService.deleteNewsById(newsId, userDetails);
     }
 }

@@ -5,6 +5,8 @@ import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +34,7 @@ public class CommentaryController {
 
     @GetMapping("/commentaries")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public List<CommentariesDto> findAll(
             @Positive @PathVariable(name = "newsId") Long newsId,
             @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
@@ -42,43 +45,47 @@ public class CommentaryController {
 
     @GetMapping("/commentaries/{commentaryId}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public CommentariesDto findCommentaryById(
             @Positive @PathVariable(name = "newsId") Long newsId,
-            @Positive @RequestParam(name = "userId") Long userId,
+            UserDetails userDetails,
             @PathVariable Long commentaryId) {
 
-        return commentaryService.findCommentaryById(newsId, userId, commentaryId);
+        return commentaryService.findCommentaryById(newsId, userDetails, commentaryId);
     }
 
     @PostMapping("/commentaries")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public CommentariesDto createCommentary(
             @Positive @PathVariable(name = "newsId") Long newsId,
-            @Positive @RequestParam(name = "userId") Long userId,
+            UserDetails userDetails,
             @Validated(Create.class) @RequestBody CommentariesDto commentariesDto) {
 
-        return commentaryService.createCommentary(newsId, userId, commentariesDto);
+        return commentaryService.createCommentary(newsId, userDetails, commentariesDto);
     }
 
     @PutMapping("/commentaries/{commentaryId}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public CommentariesDto updateCommentaryById(
             @Positive @PathVariable(name = "newsId") Long newsId,
-            @Positive @RequestParam(name = "userId") Long userId,
+            UserDetails userDetails,
             @Positive @PathVariable Long commentaryId,
             @Validated(Update.class) @RequestBody CommentariesDto commentariesDto) {
 
-        return commentaryService.updateCommentaryById(newsId, commentaryId, userId, commentariesDto);
+        return commentaryService.updateCommentaryById(newsId, commentaryId, userDetails, commentariesDto);
     }
 
     @DeleteMapping("/commentaries/{commentaryId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public CommentariesDto deleteCommentaryById(
             @Positive @PathVariable(name = "newsId") Long newsId,
-            @Positive @RequestParam(name = "userId") Long userId,
+            UserDetails userDetails,
             @PathVariable Long commentaryId) {
 
-        return commentaryService.deleteCommentaryById(newsId, commentaryId, userId);
+        return commentaryService.deleteCommentaryById(newsId, commentaryId, userDetails);
     }
 }
 

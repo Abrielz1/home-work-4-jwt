@@ -2,6 +2,7 @@ package ru.skillbox.homework4.news.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +29,7 @@ public class CategoryController {
     private final CategoryService service;
 
     @GetMapping
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     public List<CategoryDto> findAll() {
 
@@ -35,6 +37,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{categoryId}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     public CategoryDto findCategoryById(@PathVariable Long categoryId) {
 
@@ -42,6 +45,7 @@ public class CategoryController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryDto createCategory(@Validated(Create.class) @RequestBody CategoryNewDto newDto) {
 
@@ -49,6 +53,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{categoryId}")
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     public CategoryDto updateCategory(@PathVariable Long categoryId,
                                       @Validated(Update.class) @RequestBody CategoryDto categoryDto) {
@@ -57,6 +62,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{categoryId}")
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCategoryById(@PathVariable Long categoryId) {
 
